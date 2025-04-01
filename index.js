@@ -168,6 +168,27 @@ app.post("/recipes/title/:recipeTitle", async (req, res) => {
   }
 });
 
+const deleteRecipeById = async (recipeId) => {
+  try {
+    const deletedRecipe = await Recipe.findByIdAndDelete(recipeId);
+    return deletedRecipe;
+  } catch (error) {
+    console.log("Error deleting recipe:", error);
+  }
+};
+
+app.delete("/recipes/:recipeId", async (req, res) => {
+  try {
+    const recipeId = req.params.recipeId;
+    const deletedRecipe = await deleteRecipeById(recipeId);
+    deletedRecipe
+      ? res.json({ message: "Recipe deleted successfully.", deletedRecipe })
+      : res.status(404).json({ error: "Recipe not found!" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete recipe!" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
