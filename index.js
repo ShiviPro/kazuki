@@ -33,6 +33,26 @@ app.post("/recipes", async (req, res) => {
   }
 });
 
+const readAllRecipes = async () => {
+  try {
+    const allRecipes = await Recipe.find();
+    return allRecipes;
+  } catch (error) {
+    throw error;
+  }
+};
+
+app.get("/recipes", async (req, res) => {
+  try {
+    const allRecipes = await readAllRecipes();
+    allRecipes.length > 0
+      ? res.json(allRecipes)
+      : res.status(404).json({ error: "No recipe found!" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch recipes!" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
