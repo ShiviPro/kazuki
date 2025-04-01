@@ -140,6 +140,34 @@ app.post("/recipes/:recipeId", async (req, res) => {
   }
 });
 
+const updateRecipeByTitle = async (recipeTitle, updateData) => {
+  try {
+    const updatedRecipe = await Recipe.findOneAndUpdate(
+      { title: recipeTitle },
+      updateData,
+      {
+        new: true,
+      }
+    );
+    return updatedRecipe;
+  } catch (error) {
+    console.log("Error updating recipe:", error);
+  }
+};
+
+app.post("/recipes/title/:recipeTitle", async (req, res) => {
+  try {
+    const recipeTitle = req.params.recipeTitle;
+    const updateData = req.body;
+    const updatedRecipe = await updateRecipeByTitle(recipeTitle, updateData);
+    updatedRecipe
+      ? res.json({ message: "Recipe updated successfully.", updatedRecipe })
+      : res.status(404).json({ error: "Recipe not found!" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update recipe!" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
