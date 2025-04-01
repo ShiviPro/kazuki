@@ -95,6 +95,27 @@ app.get("/recipes/author/:authorName", async (req, res) => {
   }
 });
 
+const readRecipesByDifficulty = async (difficultyLevel) => {
+  try {
+    const desiredRecipes = await Recipe.find({ difficulty: difficultyLevel });
+    return desiredRecipes;
+  } catch (error) {
+    throw error;
+  }
+};
+
+app.get("/recipes/difficulty/:difficultyLevel", async (req, res) => {
+  try {
+    const difficultyLevel = req.params.difficultyLevel;
+    const recipes = await readRecipesByDifficulty(difficultyLevel);
+    recipes.length > 0
+      ? res.json(recipes)
+      : res.status(404).json({ error: "No recipe found!" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch recipes!" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
